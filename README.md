@@ -1,51 +1,89 @@
-# Welcome to your Expo app 👋
+SpendLock 💸
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+SpendLock is a modern finance tracking application built to help users monitor expenses, manage budgets, and understand spending habits with a clean and user-friendly experience.
 
-## Get started
+🚀 Features
+📊 Track daily expenses and income
+💰 Budget management system
+📈 Spending insights and analytics
+🔍 Search and filter transactions
+❤️ Save important financial records
+🌙 Modern and clean UI
+⚡ Fast and responsive performance
+📱 Cross-platform support using React Native + Expo
+🛠️ Tech Stack
+Frontend
+React Native
+Expo Router
+TypeScript
+Tailwind CSS / NativeWind
+Backend & Services
+REST APIs
+Async Storage / Database Integration
+Tools
+Git & GitHub
+VS Code
+Figma (UI Inspiration)
+📂 Project Structure
+SpendLock/
+│
+├── app/                # Screens and routes
+├── components/         # Reusable UI components
+├── constants/          # Static data and themes
+├── assets/             # Images, icons, fonts
+├── services/           # API and utility functions
+├── hooks/              # Custom hooks
+└── README.md
+⚙️ Installation
 
-1. Install dependencies
+Clone the repository:
 
-   ```bash
-   npm install
-   ```
+git clone https://github.com/your-username/SpendLock.git
 
-2. Start the app
+Move into the project folder:
 
-   ```bash
-   npx expo start
-   ```
+cd SpendLock
 
-In the output, you'll find options to open the app in a
+Install dependencies:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+npm install
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Start the development server:
 
-## Get a fresh project
+npx expo start
+📸 Screenshots
 
-When you're ready, run:
+Add your application screenshots here.
 
-```bash
-npm run reset-project
-```
+Example:
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Home Screen
+Analytics Screen
+Saved Transactions
+Profile Screen
+🔥 Future Improvements
+AI-based spending recommendations
+Expense categorization using ML
+Cloud sync
+Authentication system
+Multi-device support
+Export reports as PDF
+Dark mode improvements
+🤝 Contributing
 
-## Learn more
+Pull requests are welcome.
 
-To learn more about developing your project with Expo, look at the following resources:
+If you'd like to contribute:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Fork the repository
+Create your feature branch
+Commit your changes
+Push to the branch
+Open a Pull Request
+📄 License
 
-## Join the community
+This project is licensed under the MIT License.
 
-Join our community of developers creating universal apps.
+👨‍💻 Developer
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-"# SpendLock" 
+Built with passion using React Native and Expo.
