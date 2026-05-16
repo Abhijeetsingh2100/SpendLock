@@ -1,11 +1,18 @@
 import { Text, View } from "react-native";
 import "@/global.css";
 import { Link, Redirect } from "expo-router";
+import { SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
+import {styled} from "nativewind";
 
- 
+ const SafeAreaView = styled(RNSafeAreaView);
 export default function App() {
   
   return (
+    <SafeAreaView
+    className="flex-1 bg-background p-5"
+    >
+
+
     <View className="flex-1 items-center justify-center bg-background">
       <Text className="text-5xl font-bold text-success">
         Welcome 
@@ -22,5 +29,6 @@ export default function App() {
       Claude Max Subscription
     </Link>
     </View>
+    </SafeAreaView>
   );
 }
