@@ -10,8 +10,8 @@ const subscriptions = () => {
     <SafeAreaView className='flex-1 bg-background p-5'>
 
 
-    <View>
-      <Text>subscriptions</Text>
+    <View >
+      <Text >subscriptions</Text>
     </View>
     </SafeAreaView>
   )
