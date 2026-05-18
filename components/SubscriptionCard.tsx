@@ -2,19 +2,30 @@ import {View, Text, Image, Pressable} from 'react-native'
 import React from 'react'
 import {formatCurrency, formatStatusLabel, formatSubscriptionDateTime} from "@/libs/utils";
 import { clsx } from "clsx";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors } from '@/constants/theme';
 
-const SubscriptionCard = ({ name, price, currency, icon, billing, color, category, plan, renewalDate, expanded, onPress, paymentMethod, startDate, status}: SubscriptionCardProps) => {
+type MaterialIconName = React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+
+const SubscriptionCard = ({ name, price, currency, icon, iconGlyph, billing, color, category, plan, renewalDate, expanded, onPress, paymentMethod, startDate, status}: SubscriptionCardProps) => {
     const paymentMethodLabel = paymentMethod?.trim() || 'Not provided';
     const categoryLabel = category?.trim() || plan?.trim() || 'Not provided';
     const startDateLabel = startDate ? formatSubscriptionDateTime(startDate) : 'Not provided';
     const renewalDateLabel = renewalDate ? formatSubscriptionDateTime(renewalDate) : 'Not provided';
     const statusLabel = status ? formatStatusLabel(status) : 'Not provided';
+    const vectorIconName = iconGlyph as MaterialIconName | undefined;
 
     return (
         <Pressable onPress={onPress} className={clsx('sub-card', expanded ? 'sub-card-expanded' : 'bg-card')} style={!expanded && color ? { backgroundColor: color } : undefined}>
             <View className="sub-head">
                 <View className="sub-main">
-                    <Image source={icon} className="sub-icon" />
+                    {vectorIconName ? (
+                        <View className="sub-icon items-center justify-center bg-background/80">
+                            <MaterialCommunityIcons name={vectorIconName} size={34} color={colors.primary} />
+                        </View>
+                    ) : (
+                        <Image source={icon} className="sub-icon" />
+                    )}
                     <View className="sub-copy">
                         <Text numberOfLines={1} className="sub-title">
                             {name}

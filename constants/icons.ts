@@ -10,6 +10,7 @@ import github from "@/assets/icons/github.png";
 import home from "@/assets/icons/home.png";
 import medium from "@/assets/icons/medium.png";
 import menu from "@/assets/icons/menu.png";
+import netflix from "@/assets/icons/netflix.png";
 import notion from "@/assets/icons/notion.png";
 import openai from "@/assets/icons/openai.png";
 import plus from "@/assets/icons/plus.png";
@@ -25,6 +26,7 @@ export const icons = {
     add,
     back,
     menu,
+    netflix,
     plus,
     notion,
     dropbox,
