@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import type { SpendCurrency } from "@/src/libs/subscriptionMetrics";
+import { syncRenewalNotifications } from "@/src/libs/subscriptionNotifications";
 
 type SubscriptionsContextValue = {
   subscriptions: Subscription[];
@@ -16,6 +17,23 @@ const SubscriptionsContext = createContext<SubscriptionsContextValue | null>(nul
 export const SubscriptionsProvider = ({ children }: { children: React.ReactNode }) => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [monthlySpendCurrency, setMonthlySpendCurrency] = useState<SpendCurrency>("USD");
+  const scheduledNotificationIds = useRef<string[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    syncRenewalNotifications(subscriptions, scheduledNotificationIds.current)
+      .then((notificationIds) => {
+        if (isMounted) {
+          scheduledNotificationIds.current = notificationIds;
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [subscriptions]);
 
   const value = useMemo(
     () => ({
