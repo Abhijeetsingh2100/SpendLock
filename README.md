@@ -1,89 +1,154 @@
-SpendLock 💸
+# SpendLock 💸
 
-SpendLock is a modern finance tracking application built to help users monitor expenses, manage budgets, and understand spending habits with a clean and user-friendly experience.
+A modern and intuitive personal finance & subscription management app built with React Native and Expo. SpendLock helps users track expenses, monitor subscriptions, and gain insights into their spending habits through a clean and user-friendly mobile experience.
 
-🚀 Features
-📊 Track daily expenses and income
-💰 Budget management system
-📈 Spending insights and analytics
-🔍 Search and filter transactions
-❤️ Save important financial records
-🌙 Modern and clean UI
-⚡ Fast and responsive performance
-📱 Cross-platform support using React Native + Expo
-🛠️ Tech Stack
-Frontend
-React Native
-Expo Router
-TypeScript
-Tailwind CSS / NativeWind
-Backend & Services
-REST APIs
-Async Storage / Database Integration
-Tools
-Git & GitHub
-VS Code
-Figma (UI Inspiration)
-📂 Project Structure
+---
+
+## ✨ Features
+
+* 📊 Expense tracking and financial overview
+* 🔔 Subscription reminders and upcoming payments
+* 📈 Spending insights and analytics
+* 🔍 Search and organize transactions
+* 👤 User profile and personalized dashboard
+* ⚡ Fast and responsive mobile UI
+* 🌙 Clean modern design
+* 📱 Cross-platform support (Android & iOS)
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* React Native
+* Expo
+* Expo Router
+* NativeWind / Tailwind CSS
+* TypeScript
+
+### Backend & APIs
+
+* REST APIs
+* Async Storage / Database Integration
+
+### Tools & Libraries
+
+* React Navigation
+* Expo Vector Icons
+* Axios / Fetch API
+* Git & GitHub
+
+---
+
+## 📸 Screenshots
+
+> Add your app screenshots here after uploading them to GitHub.
+
+| Home Screen                            | Insights                                       | Profile                                      |
+| -------------------------------------- | ---------------------------------------------- | -------------------------------------------- |
+| ![Home](./assets/screenshots/home.png) | ![Insights](./assets/screenshots/insights.png) | ![Profile](./assets/screenshots/profile.png) |
+
+---
+
+## 🚀 Installation & Setup
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/your-username/spendlock.git
+cd spendlock
+```
+
+### 2️⃣ Install Dependencies
+
+```bash
+npm install
+```
+
+or
+
+```bash
+yarn install
+```
+
+### 3️⃣ Start the Development Server
+
+```bash
+npx expo start
+```
+
+---
+
+## 📂 Project Structure
+
+```bash
 SpendLock/
 │
-├── app/                # Screens and routes
-├── components/         # Reusable UI components
-├── constants/          # Static data and themes
+├── app/                # Expo Router screens
 ├── assets/             # Images, icons, fonts
-├── services/           # API and utility functions
+├── components/         # Reusable UI components
+├── constants/          # Theme, data, constants
+├── services/           # API calls and fetch logic
 ├── hooks/              # Custom hooks
+├── styles/             # Global styles
+├── utils/              # Utility functions
 └── README.md
-⚙️ Installation
+```
 
-Clone the repository:
+---
 
-git clone https://github.com/your-username/SpendLock.git
+## 🔐 Environment Variables
 
-Move into the project folder:
+Create a `.env` file in the root directory and add the following:
 
-cd SpendLock
+```env
+EXPO_PUBLIC_API_URL=your_api_url
+EXPO_PUBLIC_API_KEY=your_api_key
+```
 
-Install dependencies:
+> Make sure `.env` is added to `.gitignore` before pushing to GitHub.
 
-npm install
+---
 
-Start the development server:
+## 🧠 Future Improvements
 
-npx expo start
-📸 Screenshots
+* AI-based expense predictions
+* Monthly budget goals
+* Dark mode support
+* Cloud sync and authentication
+* Export reports as PDF/Excel
+* Multi-device sync
 
-Add your application screenshots here.
+---
 
-Example:
+## 🤝 Contributing
 
-Home Screen
-Analytics Screen
-Saved Transactions
-Profile Screen
-🔥 Future Improvements
-AI-based spending recommendations
-Expense categorization using ML
-Cloud sync
-Authentication system
-Multi-device support
-Export reports as PDF
-Dark mode improvements
-🤝 Contributing
+Contributions are welcome.
 
-Pull requests are welcome.
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
-If you'd like to contribute:
+---
 
-Fork the repository
-Create your feature branch
-Commit your changes
-Push to the branch
-Open a Pull Request
-📄 License
+## 📄 License
 
 This project is licensed under the MIT License.
 
-👨‍💻 Developer
+---
 
-Built with passion using React Native and Expo.
+## 👨‍💻 Developer
+
+Made with ❤️ by Abhijeet Singh
+
+* GitHub: [https://github.com/your-username](https://github.com/your-username)
+* LinkedIn: [https://linkedin.com/in/your-profile](https://linkedin.com/in/your-profile)
+
+---
+
+## ⭐ Support
+
+If you like this project, give it a star on GitHub — it helps a lot!
