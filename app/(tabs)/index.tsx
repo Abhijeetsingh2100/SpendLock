@@ -12,12 +12,14 @@ import ListHeading from "@/components/ListHeading";
 import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import { useState } from "react";
+import { usePostHog } from "posthog-react-native";
 
  const SafeAreaView = styled(RNSafeAreaView);
 export default function App() {
 
     const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
     const { user } = useUser();
+    const posthog = usePostHog();
     const displayName = user?.fullName || user?.firstName || user?.primaryEmailAddress?.emailAddress || "SpendLock";
     const avatarSource = user?.imageUrl ? { uri: user.imageUrl } : images.avatar;
 
@@ -80,8 +82,15 @@ export default function App() {
      renderItem={({item}) => (
       <SubscriptionCard 
       {...item} expanded={expandedSubscriptionId === item.id}
-      onPress={() => setExpandedSubscriptionId((currentId)=> 
-         (currentId === item.id ? null : item.id))}
+      onPress={() => setExpandedSubscriptionId((currentId) => {
+        const next = currentId === item.id ? null : item.id
+        if (next !== null) {
+          posthog.capture('subscription_card_expanded', { subscription_id: item.id, subscription_name: item.name })
+        } else {
+          posthog.capture('subscription_card_collapsed', { subscription_id: item.id, subscription_name: item.name })
+        }
+        return next
+      })}
       />
      )}
      extraData={expandedSubscriptionId} 

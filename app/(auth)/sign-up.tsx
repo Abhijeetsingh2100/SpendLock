@@ -2,6 +2,7 @@ import { isClerkAPIResponseError, useSignUp } from '@clerk/expo'
 import { Link, useRouter } from 'expo-router'
 import { styled } from 'nativewind'
 import React, { useMemo, useState } from 'react'
+import { usePostHog } from 'posthog-react-native'
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -24,6 +25,19 @@ type FieldErrors = {
   password?: string
   confirmPassword?: string
   code?: string
+}
+
+type PasswordValidator = {
+  validatePassword?: (
+    password: string,
+    callbacks?: {
+      onValidation?: (result: {
+        complexity?: Record<string, boolean | undefined>
+        strength?: { state: 'excellent' | 'pass' | 'fail'; keys?: string[] }
+      }) => void
+      onValidationComplexity?: (isValid: boolean) => void
+    },
+  ) => void
 }
 
 const getAuthError = (error: unknown, fallback: string) => {
@@ -58,9 +72,45 @@ const getPasswordIssue = (password: string) => {
   return ''
 }
 
+const getClerkPasswordIssue = (validator: PasswordValidator | null, password: string) => {
+  if (!validator?.validatePassword) return ''
+
+  let hasValidComplexity = true
+  let issue = ''
+
+  try {
+    validator.validatePassword(password, {
+      onValidation: (result) => {
+        const hasComplexityError = Object.values(result.complexity ?? {}).some(Boolean)
+
+        if (hasComplexityError) {
+          issue = 'Password does not meet the account security requirements.'
+        }
+
+        if (result.strength?.state === 'fail') {
+          issue = 'Choose a stronger password.'
+        }
+      },
+      onValidationComplexity: (isValid) => {
+        hasValidComplexity = isValid
+      },
+    })
+  } catch {
+    return ''
+  }
+
+  if (!hasValidComplexity && !issue) {
+    return 'Password does not meet the account security requirements.'
+  }
+
+  return issue
+}
+
+
 export default function SignUp() {
   const router = useRouter()
   const { signUp } = useSignUp()
+  const posthog = usePostHog()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -93,12 +143,19 @@ export default function SignUp() {
       return
     }
 
+    const userEmail = email.trim()
+    posthog.identify(userEmail, {
+      $set: { email: userEmail, name: name.trim() },
+      $set_once: { signup_date: new Date().toISOString() },
+    })
+    posthog.capture('user_signed_up', { email: userEmail, name: name.trim() })
+
     router.replace('/(tabs)')
   }
 
-  const validateForm = () => {
+  const validateForm = (validator: PasswordValidator | null = null) => {
     const nextErrors: FieldErrors = {}
-    const passwordIssue = getPasswordIssue(password)
+    const passwordIssue = getPasswordIssue(password) || getClerkPasswordIssue(validator, password)
 
     if (!name.trim()) {
       nextErrors.name = 'Enter your name.'
@@ -127,7 +184,7 @@ export default function SignUp() {
   }
 
   const handleSubmit = async () => {
-    if (!signUp || !validateForm()) return
+    if (!signUp || !validateForm(signUp as unknown as PasswordValidator)) return
 
     const [firstName, ...restName] = name.trim().split(/\s+/)
     const lastName = restName.join(' ')
@@ -146,6 +203,7 @@ export default function SignUp() {
 
       if (error) {
         setAuthError(getAuthError(error, 'We could not create your account with those details.'))
+        posthog.capture('sign_up_failed', { reason: getAuthError(error, 'unknown') })
         return
       }
 

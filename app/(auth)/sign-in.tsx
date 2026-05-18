@@ -2,6 +2,7 @@ import { isClerkAPIResponseError, useSignIn } from '@clerk/expo'
 import { Link, useRouter } from 'expo-router'
 import { styled } from 'nativewind'
 import React, { useMemo, useState } from 'react'
+import { usePostHog } from 'posthog-react-native'
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -51,6 +52,7 @@ const isEmailLike = (value: string) => /^\S+@\S+\.\S+$/.test(value)
 export default function SignIn() {
   const router = useRouter()
   const { signIn } = useSignIn()
+  const posthog = usePostHog()
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
@@ -75,6 +77,10 @@ export default function SignIn() {
       setAuthError(getAuthError(error, 'Your session could not be started. Please try again.'))
       return
     }
+
+    const email = identifier.trim()
+    posthog.identify(email, { $set: { email } })
+    posthog.capture('user_signed_in', { email })
 
     router.replace('/(tabs)')
   }
@@ -111,6 +117,7 @@ export default function SignIn() {
 
       if (error) {
         setAuthError(getAuthError(error, 'We could not sign you in with those details.'))
+        posthog.capture('sign_in_failed', { reason: getAuthError(error, 'unknown') })
         return
       }
 

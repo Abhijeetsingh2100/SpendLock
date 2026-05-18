@@ -5,6 +5,7 @@ import { Alert, Image, Pressable, Text, View } from 'react-native'
 import { SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import images from '@/constants/images';
+import { usePostHog } from 'posthog-react-native'
 
  const SafeAreaView = styled(RNSafeAreaView);
 
@@ -12,6 +13,7 @@ const Settings = () => {
   const router = useRouter();
   const { signOut } = useClerk();
   const { user } = useUser();
+  const posthog = usePostHog();
   const displayName = user?.fullName || user?.firstName || user?.primaryEmailAddress?.emailAddress || 'SpendLock';
   const emailAddress = user?.primaryEmailAddress?.emailAddress || 'Signed in';
   const avatarSource = user?.imageUrl ? { uri: user.imageUrl } : images.avatar;
@@ -26,6 +28,8 @@ const Settings = () => {
           text: 'Sign out',
           style: 'destructive',
           onPress: async () => {
+            posthog.capture('user_signed_out')
+            posthog.reset()
             await signOut();
             router.replace('/(auth)/sign-in');
           },
