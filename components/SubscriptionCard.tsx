@@ -7,7 +7,7 @@ import { colors } from '@/constants/theme';
 
 type MaterialIconName = React.ComponentProps<typeof MaterialCommunityIcons>["name"];
 
-const SubscriptionCard = ({ name, price, currency, icon, iconGlyph, billing, color, category, plan, renewalDate, expanded, onPress, paymentMethod, startDate, status}: SubscriptionCardProps) => {
+const SubscriptionCard = ({ name, price, currency, icon, iconGlyph, billing, color, category, plan, renewalDate, expanded, onPress, onLongPress, paymentMethod, startDate, status}: SubscriptionCardProps) => {
     const paymentMethodLabel = paymentMethod?.trim() || 'Not provided';
     const categoryLabel = category?.trim() || plan?.trim() || 'Not provided';
     const startDateLabel = startDate ? formatSubscriptionDateTime(startDate) : 'Not provided';
@@ -16,7 +16,7 @@ const SubscriptionCard = ({ name, price, currency, icon, iconGlyph, billing, col
     const vectorIconName = iconGlyph as MaterialIconName | undefined;
 
     return (
-        <Pressable onPress={onPress} className={clsx('sub-card', expanded ? 'sub-card-expanded' : 'bg-card')} style={!expanded && color ? { backgroundColor: color } : undefined}>
+        <Pressable onPress={onPress} onLongPress={onLongPress} delayLongPress={350} className={clsx('sub-card', expanded ? 'sub-card-expanded' : 'bg-card')} style={!expanded && color ? { backgroundColor: color } : undefined}>
             <View className="sub-head">
                 <View className="sub-main">
                     {vectorIconName ? (

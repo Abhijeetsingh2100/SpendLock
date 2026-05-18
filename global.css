@@ -119,7 +119,7 @@
     }
 
     .upcoming-card {
-        @apply mr-4 w-44 rounded-2xl border border-black/10 bg-background p-4;
+        @apply mr-4 w-44 overflow-hidden rounded-2xl border border-black/10 bg-background p-4;
     }
 
     .upcoming-row {
@@ -127,11 +127,15 @@
     }
 
     .upcoming-icon {
-        @apply size-14;
+        @apply size-12 shrink-0;
+    }
+
+    .upcoming-copy {
+        @apply min-w-0 flex-1;
     }
 
     .upcoming-price {
-        @apply text-lg font-sans-bold text-primary;
+        @apply text-base font-sans-bold text-primary;
     }
 
     .upcoming-meta {
@@ -139,7 +143,7 @@
     }
 
     .upcoming-name {
-        @apply mt-2 text-lg font-sans-bold text-primary;
+        @apply mt-3 text-base font-sans-bold text-primary;
     }
 
     .sub-card {
@@ -403,11 +407,11 @@
     }
 
     .picker-row {
-        @apply flex-row gap-3;
+        @apply flex-row flex-wrap gap-3;
     }
 
     .picker-option {
-        @apply flex-1 items-center rounded-2xl border border-border bg-background py-3;
+        @apply min-w-[47%] flex-1 items-center rounded-2xl border border-border bg-background py-3;
     }
 
     .picker-option-active {

@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { clsx } from "clsx";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Modal,
@@ -19,9 +19,10 @@ type CreateSubscriptionModalProps = {
   visible: boolean;
   onClose: () => void;
   onCreate: (subscription: Subscription) => void;
+  initialSubscription?: Subscription | null;
 };
 
-type Frequency = "Monthly" | "Yearly";
+type Frequency = "Monthly" | "3 Months" | "6 Months" | "Yearly";
 type CurrencyCode = "USD" | "INR" | "EUR" | "GBP";
 
 const categories = [
@@ -42,6 +43,8 @@ const currencies: { code: CurrencyCode; label: string }[] = [
   { code: "GBP", label: "Pound" },
 ];
 
+const frequencies: Frequency[] = ["Monthly", "3 Months", "6 Months", "Yearly"];
+
 const categoryColors: Record<string, string> = {
   Entertainment: "#ffd6a5",
   "AI Tools": "#b8d4e3",
@@ -53,13 +56,20 @@ const categoryColors: Record<string, string> = {
   Other: "#f6eecf",
 };
 
-const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscriptionModalProps) => {
+const CreateSubscriptionModal = ({
+  visible,
+  onClose,
+  onCreate,
+  initialSubscription,
+}: CreateSubscriptionModalProps) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [currency, setCurrency] = useState<CurrencyCode>("USD");
   const [frequency, setFrequency] = useState<Frequency>("Monthly");
   const [category, setCategory] = useState("Entertainment");
   const [error, setError] = useState("");
+  const isEditing = Boolean(initialSubscription);
 
   const parsedPrice = Number(price.trim());
   const canSubmit = useMemo(
@@ -70,6 +80,7 @@ const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscript
   const resetForm = () => {
     setName("");
     setPrice("");
+    setPaymentMethod("");
     setCurrency("USD");
     setFrequency("Monthly");
     setCategory("Entertainment");
@@ -81,9 +92,31 @@ const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscript
     onClose();
   };
 
+  useEffect(() => {
+    if (!visible) return;
+
+    if (!initialSubscription) {
+      resetForm();
+      return;
+    }
+
+    setName(initialSubscription.name);
+    setPrice(String(initialSubscription.price));
+    setPaymentMethod(initialSubscription.paymentMethod ?? "");
+    setCurrency((initialSubscription.currency ?? "USD") as CurrencyCode);
+    setFrequency(
+      frequencies.includes(initialSubscription.billing as Frequency)
+        ? (initialSubscription.billing as Frequency)
+        : "Monthly",
+    );
+    setCategory(initialSubscription.category ?? "Entertainment");
+    setError("");
+  }, [initialSubscription, visible]);
+
   const handleSubmit = () => {
     const trimmedName = name.trim();
     const amount = Number(price.trim());
+    const trimmedPaymentMethod = paymentMethod.trim();
 
     if (!trimmedName) {
       setError("Enter a subscription name.");
@@ -95,18 +128,21 @@ const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscript
       return;
     }
 
-    const startDate = dayjs();
-    const renewalDate =
-      frequency === "Monthly" ? startDate.add(1, "month") : startDate.add(1, "year");
+    const startDate = initialSubscription?.startDate ? dayjs(initialSubscription.startDate) : dayjs();
+    const renewalDate = dayjs().add(
+      frequency === "Yearly" ? 1 : frequency === "6 Months" ? 6 : frequency === "3 Months" ? 3 : 1,
+      frequency === "Yearly" ? "year" : "month",
+    );
     const resolvedIcon = resolveSubscriptionIcon(trimmedName, category);
 
     onCreate({
-      id: `subscription-${Date.now()}`,
+      id: initialSubscription?.id ?? `subscription-${Date.now()}`,
       name: trimmedName,
       price: amount,
       frequency,
       category,
-      status: "active",
+      paymentMethod: trimmedPaymentMethod || "Not provided",
+      status: initialSubscription?.status ?? "active",
       startDate: startDate.toISOString(),
       renewalDate: renewalDate.toISOString(),
       icon: resolvedIcon.icon,
@@ -114,7 +150,7 @@ const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscript
       billing: frequency,
       color: categoryColors[category] ?? categoryColors.Other,
       currency,
-      plan: frequency === "Monthly" ? "Monthly Plan" : "Yearly Plan",
+      plan: `${frequency} Plan`,
     });
 
     resetForm();
@@ -137,7 +173,7 @@ const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscript
 
           <View className="modal-container">
             <View className="modal-header">
-              <Text className="modal-title">New Subscription</Text>
+              <Text className="modal-title">{isEditing ? "Edit Subscription" : "New Subscription"}</Text>
               <Pressable className="modal-close" onPress={handleClose}>
                 <Text className="modal-close-text">X</Text>
               </Pressable>
@@ -179,6 +215,18 @@ const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscript
               </View>
 
               <View className="auth-field">
+                <Text className="auth-label">Payment method</Text>
+                <TextInput
+                  className="auth-input"
+                  value={paymentMethod}
+                  onChangeText={setPaymentMethod}
+                  placeholder="Visa ending in 1234, UPI, PayPal..."
+                  placeholderTextColor={colors.mutedForeground}
+                  autoCapitalize="words"
+                />
+              </View>
+
+              <View className="auth-field">
                 <Text className="auth-label">Currency</Text>
                 <View className="category-scroll">
                   {currencies.map((option) => {
@@ -207,7 +255,7 @@ const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscript
               <View className="auth-field">
                 <Text className="auth-label">Frequency</Text>
                 <View className="picker-row">
-                  {(["Monthly", "Yearly"] as Frequency[]).map((option) => {
+                  {frequencies.map((option) => {
                     const isActive = frequency === option;
 
                     return (
@@ -263,7 +311,9 @@ const CreateSubscriptionModal = ({ visible, onClose, onCreate }: CreateSubscript
                 onPress={handleSubmit}
                 disabled={!canSubmit}
               >
-                <Text className="auth-button-text">Create subscription</Text>
+                <Text className="auth-button-text">
+                  {isEditing ? "Save changes" : "Create subscription"}
+                </Text>
               </Pressable>
             </ScrollView>
           </View>

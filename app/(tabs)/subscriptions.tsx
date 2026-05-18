@@ -1,19 +1,23 @@
-import { FlatList, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native'
+import { Alert, FlatList, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import { SafeAreaView as RNSafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import SubscriptionCard from '@/components/SubscriptionCard';
 import { components } from '@/constants/theme';
 import { useSubscriptions } from '@/src/context/SubscriptionsContext';
+import CreateSubscriptionModal from '@/src/components/CreateSubscriptionModal';
+import SubscriptionActionsModal from '@/src/components/SubscriptionActionsModal';
 
  const SafeAreaView = styled(RNSafeAreaView);
 
 const Subscriptions = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+  const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
+  const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const insets = useSafeAreaInsets();
-  const { subscriptions } = useSubscriptions();
+  const { subscriptions, updateSubscription, deleteSubscription } = useSubscriptions();
 
   const filteredSubscriptions = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -62,6 +66,30 @@ const Subscriptions = () => {
     ? keyboardHeight + components.tabBar.height
     : components.tabBar.height + components.tabBar.horizontalInset + insets.bottom;
 
+  const handleDeleteSubscription = () => {
+    if (!selectedSubscription) return;
+
+    const subscriptionToDelete = selectedSubscription;
+    Alert.alert(
+      'Delete subscription?',
+      `${subscriptionToDelete.name} will be removed from your dashboard.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            deleteSubscription(subscriptionToDelete.id);
+            setExpandedSubscriptionId((currentId) =>
+              currentId === subscriptionToDelete.id ? null : currentId,
+            );
+            setSelectedSubscription(null);
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <SafeAreaView className='flex-1 bg-background p-5'>
       <KeyboardAvoidingView
@@ -81,9 +109,10 @@ const Subscriptions = () => {
                   currentId === item.id ? null : item.id,
                 )
               }
+              onLongPress={() => setSelectedSubscription(item)}
             />
           )}
-          extraData={expandedSubscriptionId}
+          extraData={{ expandedSubscriptionId, filteredSubscriptions }}
           ItemSeparatorComponent={() => <View className="h-4" />}
           showsVerticalScrollIndicator={false}
           automaticallyAdjustKeyboardInsets
@@ -115,6 +144,11 @@ const Subscriptions = () => {
                   {filteredSubscriptions.length}
                 </Text>
               </View>
+              {filteredSubscriptions.length ? (
+                <Text className="-mt-3 mb-4 text-sm font-sans-semibold text-muted-foreground">
+                  Long press a subscription to edit or delete it.
+                </Text>
+              ) : null}
             </View>
           }
           ListEmptyComponent={() => (
@@ -122,6 +156,25 @@ const Subscriptions = () => {
               No subscriptions match your search
             </Text>
           )}
+        />
+        <CreateSubscriptionModal
+          visible={Boolean(editingSubscription)}
+          initialSubscription={editingSubscription}
+          onClose={() => setEditingSubscription(null)}
+          onCreate={(subscription) => {
+            updateSubscription(subscription);
+            setEditingSubscription(null);
+          }}
+        />
+        <SubscriptionActionsModal
+          visible={Boolean(selectedSubscription)}
+          subscription={selectedSubscription}
+          onClose={() => setSelectedSubscription(null)}
+          onEdit={() => {
+            setEditingSubscription(selectedSubscription);
+            setSelectedSubscription(null);
+          }}
+          onDelete={handleDeleteSubscription}
         />
       </KeyboardAvoidingView>
     </SafeAreaView>
