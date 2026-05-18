@@ -1,15 +1,14 @@
+import { useUser } from "@clerk/expo";
 import { FlatList, Image, Text, View } from "react-native";
 import "@/global.css";
-import { Link, Redirect } from "expo-router";
 import { SafeAreaView as RNSafeAreaView} from "react-native-safe-area-context";
 import {styled} from "nativewind";
 import images from "@/constants/images"
-import { HOME_BALANCE, HOME_SUBSCRIPTIONS, HOME_USER, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
+import { HOME_BALANCE, HOME_SUBSCRIPTIONS, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
 import { formatCurrency } from "@/libs/utils";
 import dayjs from "dayjs";
 import ListHeading from "@/components/ListHeading";
-import LishHeading from "@/components/ListHeading";
 import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import { useState } from "react";
@@ -18,6 +17,10 @@ import { useState } from "react";
 export default function App() {
 
     const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+    const { user } = useUser();
+    const displayName = user?.fullName || user?.firstName || user?.primaryEmailAddress?.emailAddress || "SpendLock";
+    const avatarSource = user?.imageUrl ? { uri: user.imageUrl } : images.avatar;
+
   return (
     <SafeAreaView
     className="flex-1 bg-background p-5"
@@ -30,8 +33,8 @@ export default function App() {
       <>
       <View className="home-header">
        <View className="home-user">
-        <Image source={images.avatar} className="home-avatar"/>
-        <Text className="home-user-name">{HOME_USER.name}</Text>
+        <Image source={avatarSource} className="home-avatar"/>
+        <Text numberOfLines={1} className="home-user-name">{displayName}</Text>
        </View>
 
         <Image source={icons.add} className="home-add-icon"/>
@@ -54,7 +57,7 @@ export default function App() {
 
       </View>
       <View  className="mb-5">
-     <LishHeading title="Upcoming" />
+     <ListHeading title="Upcoming" />
      {/* <UpcomingSubscriptionCard data={UPCOMING_SUBSCRIPTIONS[0]}/> */}
 
      <FlatList 
@@ -70,7 +73,7 @@ export default function App() {
 
      
       </View>
-       <LishHeading title="All Subscriptions" />
+       <ListHeading title="All Subscriptions" />
       </>
      )}
      keyExtractor={(item) => item.id}
